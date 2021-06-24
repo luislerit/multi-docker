@@ -1,0 +1,29 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+# build test version using Dockerfile.dev file to access test suites and dependencies
+before_install:
+  - docker build -t jmllerit/react-test -f ./client/Dockerfile.dev ./client
+
+# run test
+script:
+  # - docker run jmllerit/react-test npm test -- --coverage
+  - docker run -e CI=true jmllerit/react-test npm test -- --coverage
+
+# Production build using default Dockerfile
+after_success:
+  - docker build -t jmllerit/multi-client ./client
+  - docker build -t jmllerit/multi-nginx ./nginx
+  - docker build -t jmllerit/multi-server ./server
+  - docker build -t jmllerit/multi-worker ./worker
+
+# Log in to docker CLI using encrypted environment variables
+  - echo "$DOCKER_PASSWORD" | docker login -i "$DOCKER_ID" --password-stdin
+# Take images created above then push them to docker hub
+  - docker push jmllerit/multi-client
+  - docker push jmllerit/multi-nginx
+  - docker push jmllerit/multi-server
+  - docker push jmllerit/multi-worker
