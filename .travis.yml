@@ -27,7 +27,7 @@ deploy:
   provider: elasticbeanstalk
   region: "us-east-2"
   app: "multi-docker"
-  env: "Multidocker-env"
+  env: "Multidocker-env-2"
   # Use S3 bucket
   bucket_name: "elasticbeanstalk-us-east-2-130186549773"
   bucket_path: "docker-multi"
